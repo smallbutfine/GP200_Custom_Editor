@@ -110,7 +110,7 @@ public static class ReadOnlyMidi
                name.IndexOf("GP100", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
-    public static bool IsDeviceAvailable()
+    public static bool IsDeviceAvailable() { try { return GetInputDevices().Any(d => IsValetonFamily(d.name)) && GetOutputDevices().Any(d => IsValetonFamily(d.name)); } catch { return false; } } static bool UnusedIsDeviceAvailable()
     {
         try{_=FindInput();_=FindOutput();return true;}catch(IOException){return false;}
     }

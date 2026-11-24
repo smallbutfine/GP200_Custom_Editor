@@ -428,8 +428,8 @@ public sealed partial class EditorWindow:Window
             }
         };
         LivePedalSyncCoordinator.Instance.Attach(this);
-        refreshTimer.Tick+=async(_,_)=>{if(live==null)await TryAutoConnect();else PollDevice();UpdateModernConnection();if(renderQueued&&!sliderGesture&&!liveBusy&&!livePump)Render();};refreshTimer.Start();Closed+=(_,_)=>{refreshTimer.Stop();previewAudio.StopLoop();};
-        Closing+=(_,eventArgs)=>{if(liveBusy||loadingLibrary){eventArgs.Cancel=true;return;}if(entries.Any(e=>e.Dirty)&&UiDialogs.Show(this,UiText.T("Hay cambios locales sin exportar. ¿Cerrar?"),UiText.T("Cambios locales"),MessageBoxButton.YesNo,MessageBoxImage.Question)!=MessageBoxResult.Yes)eventArgs.Cancel=true;};
+        refreshTimer.Tick+=async(_,_)=>{if(live==null)await TryAutoConnect();else PollDevice();UpdateModernConnection();if(renderQueued&&!sliderGesture&&!liveBusy&&!livePump)Render();};refreshTimer.Start();Closed+=(_,_)=>{refreshTimer.Stop();previewAudio.StopLoop();Environment.Exit(0);};
+        Closing+=(_,eventArgs)=>{autoConnect=false;refreshTimer.Stop();if(entries.Any(e=>e.Dirty)&&UiDialogs.Show(this,UiText.T("Hay cambios locales sin exportar. ¿Cerrar?"),UiText.T("Cambios locales"),MessageBoxButton.YesNo,MessageBoxImage.Question)!=MessageBoxResult.Yes)eventArgs.Cancel=true;};
         PreviewKeyDown+=(sender,e)=>
         {
             if(System.Windows.Input.Keyboard.FocusedElement is TextBox)return;
@@ -1344,7 +1344,7 @@ public sealed partial class EditorWindow:Window
         else{Render();ampCabStudioWindow?.SyncFromDocument();}
         status.Text=redo?UiText.T("Cambio rehecho."):UiText.T("Cambio deshecho.");
     }
-    async Task TryAutoConnect()
+    async Task TryAutoConnect() // manual connect preferred if no GP-200
     {
         if(AppPreferences.ProfileSelectionRequired||!autoConnect||devicePanelOpen||live!=null||liveBusy||livePump||DateTime.UtcNow<nextConnect)return;
         nextConnect=DateTime.UtcNow.AddSeconds(3);

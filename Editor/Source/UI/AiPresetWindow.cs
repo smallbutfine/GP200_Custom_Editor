@@ -894,9 +894,12 @@ internal sealed class AiPresetWindow : Window
                 apiKey.IsEnabled = false;
                 apiKeyEnvStatus.Text = UiText.Language == "es" ? "✓ Modo local: Conecta con Ollama (:11434) o LM Studio (:1234) sin clave ni internet" : "✓ Local Mode: Connects to Ollama (:11434) or LM Studio (:1234) without API key";
                 apiKeyEnvStatus.Foreground = BrushHex("#00E5FF");
+                model.IsEditable = true;
+                _ = VerifyProviderAndLoadModelsAsync();
             }
             else
             {
+                model.IsEditable = false;
                 apiKey.IsEnabled = true;
                 string? savedKey = null;
                 try
@@ -942,7 +945,7 @@ internal sealed class AiPresetWindow : Window
     static readonly string[] DefaultGeminiModels = ["gemini-3.1-flash-lite", "gemini-2.5-flash-lite", "gemini-3.5-flash", "gemini-2.5-flash"];
     static readonly string[] DefaultAnthropicModels = ["claude-3-7-sonnet-latest", "claude-3-5-sonnet-latest", "claude-3-5-haiku-latest"];
     static readonly string[] DefaultOpenRouterModels = ["google/gemini-2.0-flash-exp:free", "meta-llama/llama-3.3-70b-instruct:free", "mistralai/mistral-7b-instruct:free"];
-    static readonly string[] DefaultLocalAiModels = ["llama3.2", "qwen2.5-coder", "mistral", "deepseek-r1", "phi3"];
+    static readonly string[] DefaultLocalAiModels = [];
 
     void ResetModelList()
     {
