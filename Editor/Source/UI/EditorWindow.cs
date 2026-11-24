@@ -392,7 +392,7 @@ public sealed partial class EditorWindow:Window
     {
         this.autoConnect=autoConnect;
         Loaded+=async(_,_)=>{if(AppPreferences.ProfileSelectionRequired){status.Text=AppPreferences.LoadWarning??"Select device profile.";UiDialogs.Show(this,status.Text,"Device profile");}else await TryAutoConnect();};
-        Title=UiText.T("GP200 Replica · Editor local");Width=1380;Height=930;MinWidth=1080;MinHeight=760;
+        Title=UiText.T("GP200 Replica · Editor local");MinWidth=960;MinHeight=540;Width=Math.Min(1380,SystemParameters.WorkArea.Width-16);Height=Math.Min(930,SystemParameters.WorkArea.Height-16);
         ResizeMode=ResizeMode.CanResizeWithGrip;
         Background=BackgroundBrush;Foreground=TextBrush;FontFamily=new FontFamily("Segoe UI");FontSize=14;
         Resources.Add(typeof(Button),ButtonStyle());
