@@ -282,11 +282,12 @@ public sealed class JamStudioWindow : Window
     // Real-Time GP-200 Input Monitoring & Bit-Perfect Recording
     private readonly AudioCaptureEngine inputCaptureEngine = new();
     private readonly Border inputMonitorBorder = new();
-    private readonly Ellipse inputSignalLed = new() { Width = 10, Height = 10, Fill = new SolidColorBrush(Color.FromRgb(74, 85, 104)), Margin = new Thickness(0, 0, 6, 0), ToolTip = "Indicador de señal de guitarra GP-200 en tiempo real" };
+    static string L(string es, string en) => UiText.Language == "es" ? es : en;
+    private readonly Ellipse inputSignalLed = new() { Width = 10, Height = 10, Fill = new SolidColorBrush(Color.FromRgb(74, 85, 104)), Margin = new Thickness(0, 0, 6, 0), ToolTip = L("Indicador de señal de guitarra GP-200 en tiempo real", "Real-time GP-200 guitar signal indicator") };
     private readonly TextBlock inputSignalText = new() { Text = "Silencio", FontSize = 10, FontWeight = FontWeights.SemiBold, Foreground = DarkUiTheme.AuraTextMutedBrush, VerticalAlignment = VerticalAlignment.Center, MinWidth = 46 };
-    private readonly Button inputDeviceBtn = new() { Content = "🎸 GP-200 IN ▾", FontSize = 11, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, Cursor = Cursors.Hand, ToolTip = "Entrada de audio activa para grabar la guitarra. Haz clic para cambiar de dispositivo." };
-    private readonly Button autoDetectInputBtn = new() { Content = "🔍 Auto", FontSize = 10, FontWeight = FontWeights.Bold, Padding = new Thickness(5, 2, 5, 2), Margin = new Thickness(3, 0, 3, 0), Background = DarkUiTheme.AuraBgCardBrush, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, Cursor = Cursors.Hand, ToolTip = "Escanear y auto-conectar a la entrada que tenga sonido o guitarra activa en la laptop." };
-    private readonly Button liveMonitorBtn = new() { Content = "🎧 Mon: ON", FontSize = 10, FontWeight = FontWeights.Bold, Padding = new Thickness(5, 2, 5, 2), Margin = new Thickness(3, 0, 5, 0), Background = DarkUiTheme.SuccessBrush, Foreground = Brushes.White, Cursor = Cursors.Hand, ToolTip = "Monitoreo en Vivo (ON): Escucha el pedal y tu guitarra por los altavoces o auriculares en tiempo real." };
+    private readonly Button inputDeviceBtn = new() { Content = "🎸 GP-200 IN ▾", FontSize = 11, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, Cursor = Cursors.Hand, ToolTip = L("Entrada de audio activa para grabar la guitarra. Haz clic para cambiar de dispositivo.", "Active audio input for guitar recording. Click to change device.") };
+    private readonly Button autoDetectInputBtn = new() { Content = "🔍 Auto", FontSize = 10, FontWeight = FontWeights.Bold, Padding = new Thickness(5, 2, 5, 2), Margin = new Thickness(3, 0, 3, 0), Background = DarkUiTheme.AuraBgCardBrush, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, Cursor = Cursors.Hand, ToolTip = L("Escanear y auto-conectar a la entrada que tenga sonido o guitarra activa en la laptop.", "Scan and auto-connect to the input with active guitar or audio signal.") };
+    private readonly Button liveMonitorBtn = new() { Content = "🎧 Mon: ON", FontSize = 10, FontWeight = FontWeights.Bold, Padding = new Thickness(5, 2, 5, 2), Margin = new Thickness(3, 0, 5, 0), Background = DarkUiTheme.SuccessBrush, Foreground = Brushes.White, Cursor = Cursors.Hand, ToolTip = L("Monitoreo en Vivo (ON): Escucha el pedal y tu guitarra por los altavoces o auriculares en tiempo real.", "Live Monitoring (ON): Hear your pedal and guitar through speakers or headphones in real time.") };
     private WaveFileWriter? guitarWaveWriter;
     private string? recordingFilePath;
     private bool isRecordingGuitarActive = false;
@@ -294,7 +295,7 @@ public sealed class JamStudioWindow : Window
     // Scalable Root Grid for real 100% zoom
     private readonly Grid scalableRootGrid = new();
     private readonly TextBlock zoomDisplay = new() { Text = "100%", FontSize = 11, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 4, 0) };
-    private readonly TextBlock activeTrackPill = new() { Text = "Pista Activa: Track 1", FontSize = 11, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 8, 0) };
+    private readonly TextBlock activeTrackPill = new() { Text = L("Pista Activa: Track 1", "Active Track: Track 1"), FontSize = 11, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 8, 0) };
 
     // FL Studio Tools, Undo/Redo and Grid Snap
     private readonly Stack<JamStudioSnapshot> undoStack = new();
@@ -307,7 +308,7 @@ public sealed class JamStudioWindow : Window
         Padding = new Thickness(8, 2, 8, 2),
         Margin = new Thickness(2, 0, 2, 0),
         Cursor = Cursors.Hand,
-        ToolTip = "Deshacer (Ctrl+Z)",
+        ToolTip = L("Deshacer (Ctrl+Z)", "Undo (Ctrl+Z)"),
         IsEnabled = false,
         Opacity = 0.45
     };
@@ -319,14 +320,14 @@ public sealed class JamStudioWindow : Window
         Padding = new Thickness(8, 2, 8, 2),
         Margin = new Thickness(2, 0, 4, 0),
         Cursor = Cursors.Hand,
-        ToolTip = "Rehacer (Ctrl+Y / Ctrl+Shift+Z)",
+        ToolTip = L("Rehacer (Ctrl+Y / Ctrl+Shift+Z)", "Redo (Ctrl+Y / Ctrl+Shift+Z)"),
         IsEnabled = false,
         Opacity = 0.45
     };
     private PlaylistTool currentTool = PlaylistTool.Slice;
     private GridSnapMode currentSnap = GridSnapMode.Line;
     private readonly Dictionary<PlaylistTool, Button> toolButtons = new();
-    private readonly ComboBox snapCombo = new() { Width = 115, Margin = new Thickness(4, 0, 4, 0), ToolTip = "Ajuste de Rejilla (Snap a compás/tiempo)", Cursor = Cursors.Hand };
+    private readonly ComboBox snapCombo = new() { Width = 115, Margin = new Thickness(4, 0, 4, 0), ToolTip = L("Ajuste de Rejilla (Snap a compás/tiempo)", "Grid Snap (Snap to bar/beat)"), Cursor = Cursors.Hand };
     private readonly Button stemKitQuickImportBtn = new() { Content = "📥 Importar de StemKit ▾", FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, Margin = new Thickness(4, 0, 0, 0), Cursor = Cursors.Hand, ToolTip = "Ver e importar canciones y stems ya separados en StemKit" };
 
     // FL Studio Top Center Bar Elements
@@ -341,7 +342,7 @@ public sealed class JamStudioWindow : Window
         Cursor = Cursors.Hand,
         Background = DarkUiTheme.AuraBgCardBrush,
         Foreground = DarkUiTheme.AuraCyanPrimaryBrush,
-        ToolTip = "Modo: SONG (todas las pistas) / PAT (solo la pista activa seleccionada)"
+        ToolTip = L("Modo: SONG (todas las pistas) / PAT (solo la pista activa seleccionada)", "Mode: SONG (all tracks) / PAT (selected active track only)")
     };
     private readonly TextBlock flBpmReadout = new()
     {
@@ -366,7 +367,7 @@ public sealed class JamStudioWindow : Window
         Foreground = DarkUiTheme.AuraCyanPrimaryBrush,
         VerticalAlignment = VerticalAlignment.Center,
         Margin = new Thickness(4, 0, 4, 0),
-        ToolTip = "Compás : Tiempo : Subdivisión (Bar : Beat : Step)"
+        ToolTip = L("Compás : Tiempo : Subdivisión (Bar : Beat : Step)", "Bar : Beat : Step")
     };
     private readonly TextBlock flTimecodeMinSec = new()
     {
@@ -423,15 +424,15 @@ public sealed class JamStudioWindow : Window
     private readonly DispatcherTimer telemetryTimer = new() { Interval = TimeSpan.FromSeconds(2.0) };
 
     // UI Elements - Top Transport Bar (Row 0)
-    private readonly Button loadAudioBtn = new() { Content = "+ Cargar Audio / YouTube ▾", FontWeight = FontWeights.SemiBold, MinWidth = 145, Cursor = Cursors.Hand };
+    private readonly Button loadAudioBtn = new() { Content = L("+ Cargar Audio / YouTube ▾", "+ Load Audio / YouTube ▾"), FontWeight = FontWeights.SemiBold, MinWidth = 145, Cursor = Cursors.Hand };
     private readonly Button stemKitBackendBtn = new() { Content = "⚙️ StemKit ▾", MinWidth = 110, Cursor = Cursors.Hand, ToolTip = "Opciones y estado del backend de StemKit" };
-    private readonly Button separateStemsBtn = new() { Content = "✨ Separar Stems", FontWeight = FontWeights.Bold, MinWidth = 135, Cursor = Cursors.Hand, Background = DarkUiTheme.AuraCyanPrimaryBrush, Foreground = DarkUiTheme.AuraBgDeepBrush };
+    private readonly Button separateStemsBtn = new() { Content = L("✨ Separar Stems", "✨ Separate Stems"), FontWeight = FontWeights.Bold, MinWidth = 135, Cursor = Cursors.Hand, Background = DarkUiTheme.AuraCyanPrimaryBrush, Foreground = DarkUiTheme.AuraBgDeepBrush };
 
     // Consolidated Top Sub-Menus to prevent any overcrowding
     private readonly Button practiceModesMenuBtn = new()
     {
-        Content = "🎸 Modos Práctica ▾",
-        ToolTip = "Modos de Práctica: Práctica Guitarra, Karaoke, Ritmo (Batería+Bajo), Restablecer",
+        Content = L("🎸 Modos Práctica ▾", "🎸 Practice Modes ▾"),
+        ToolTip = L("Modos de Práctica: Práctica Guitarra, Karaoke, Ritmo (Batería+Bajo), Restablecer", "Practice Modes: Guitar Practice, Karaoke, Rhythm (Drums+Bass), Reset"),
         FontWeight = FontWeights.Bold,
         Cursor = Cursors.Hand,
         Background = DarkUiTheme.SuccessBrush,
@@ -441,7 +442,7 @@ public sealed class JamStudioWindow : Window
     private readonly Button exportMenuBtn = new()
     {
         Content = "💾 Exportar ▾",
-        ToolTip = "Exportar mezcla máster (.WAV) o stems individuales",
+        ToolTip = L("Exportar mezcla máster (.WAV) o stems individuales", "Export master mix (.WAV) or individual stems"),
         FontWeight = FontWeights.SemiBold,
         Cursor = Cursors.Hand,
         Margin = new Thickness(0, 0, 4, 0)
@@ -455,12 +456,12 @@ public sealed class JamStudioWindow : Window
     };
 
     // Quick Practice Presets & Export Actions
-    private readonly Button practiceModeBtn = new() { Content = "🎸 Modo Práctica Guitarra", ToolTip = "Silencia la guitarra original y activa el acompañamiento para que toques encima", FontWeight = FontWeights.Bold, Cursor = Cursors.Hand, Background = DarkUiTheme.SuccessBrush, Foreground = Brushes.White, Margin = new Thickness(6, 0, 0, 0) };
+    private readonly Button practiceModeBtn = new() { Content = L("🎸 Modo Práctica Guitarra", "🎸 Guitar Practice Mode"), ToolTip = L("Silencia la guitarra original y activa el acompañamiento para que toques encima", "Mutes the original guitar and plays the backing tracks so you can play along"), FontWeight = FontWeights.Bold, Cursor = Cursors.Hand, Background = DarkUiTheme.SuccessBrush, Foreground = Brushes.White, Margin = new Thickness(6, 0, 0, 0) };
     private readonly Button karaokeModeBtn = new() { Content = "🎤 Karaoke", ToolTip = "Silencia las voces para cantar encima", Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0) };
-    private readonly Button drumsBassModeBtn = new() { Content = "🥁 Batería + Bajo", ToolTip = "Modo Ritmo: Solo reproduce batería y bajo para practicar groove y tiempo con tu guitarra", Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0) };
-    private readonly Button resetMixBtn = new() { Content = "🔄 Reset", ToolTip = "Restablece todos los silenciados y volúmenes", Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 8, 0) };
-    private readonly Button exportMixBtn = new() { Content = "💾 Exportar Mezcla", FontWeight = FontWeights.SemiBold, ToolTip = "Exporta la mezcla master actual como un archivo WAV", Cursor = Cursors.Hand, Margin = new Thickness(0, 0, 4, 0) };
-    private readonly Button exportStemsBtn = new() { Content = "📁 Exportar Stems", FontWeight = FontWeights.SemiBold, ToolTip = "Exporta todos los stems separados como archivos .WAV individuales a una carpeta", Cursor = Cursors.Hand, Margin = new Thickness(0, 0, 8, 0) };
+    private readonly Button drumsBassModeBtn = new() { Content = L("🥁 Batería + Bajo", "🥁 Drums + Bass"), ToolTip = L("Modo Ritmo: Solo reproduce batería y bajo para practicar groove y tiempo con tu guitarra", "Rhythm Mode: Plays only drums and bass to practice groove and timing"), Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0) };
+    private readonly Button resetMixBtn = new() { Content = "🔄 Reset", ToolTip = L("Restablece todos los silenciados y volúmenes", "Resets all mutes and volumes"), Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 8, 0) };
+    private readonly Button exportMixBtn = new() { Content = L("💾 Exportar Mezcla", "💾 Export Mix"), FontWeight = FontWeights.SemiBold, ToolTip = L("Exporta la mezcla master actual como un archivo WAV", "Exports the current master mix as a WAV file"), Cursor = Cursors.Hand, Margin = new Thickness(0, 0, 4, 0) };
+    private readonly Button exportStemsBtn = new() { Content = L("📁 Exportar Stems", "📁 Export Stems"), FontWeight = FontWeights.SemiBold, ToolTip = L("Exporta todos los stems separados como archivos .WAV individuales a una carpeta", "Exports all separated stems as individual .WAV files to a folder"), Cursor = Cursors.Hand, Margin = new Thickness(0, 0, 8, 0) };
 
     // Transport Controls
     private readonly TextBox bpmBox = new() { Text = "120", MinWidth = 45, Padding = new Thickness(4, 2, 4, 2), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, FontSize = 12, FontWeight = FontWeights.Bold };
@@ -469,12 +470,12 @@ public sealed class JamStudioWindow : Window
     private readonly TextBlock keyPill = new() { Text = "C min", FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 4, 0) };
     
     // Pitch Shift & Speed Selector
-    private readonly ComboBox pitchShiftCombo = new() { Width = 72, ToolTip = "Pitch Shift (Cambia la afinación de la canción sin tocar las clavijas de tu guitarra)", Cursor = Cursors.Hand };
-    private readonly ComboBox speedCombo = new() { Width = 68, ToolTip = "Velocidad de práctica (Ralentiza solos rápidos para aprenderlos fácil)", Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 8, 0) };
+    private readonly ComboBox pitchShiftCombo = new() { Width = 72, ToolTip = L("Pitch Shift (Cambia la afinación de la canción sin tocar las clavijas de tu guitarra)", "Pitch Shift (Changes song tuning without retuning your guitar)"), Cursor = Cursors.Hand };
+    private readonly ComboBox speedCombo = new() { Width = 68, ToolTip = L("Velocidad de práctica (Ralentiza solos rápidos para aprenderlos fácil)", "Practice speed (Slows down fast solos to learn them easily)"), Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 8, 0) };
 
     private readonly Button rewindBtn = new() { Content = "⏮", MinWidth = 40, Cursor = Cursors.Hand, ToolTip = "Ir al inicio" };
     private readonly Button playPauseBtn = new() { Content = "▶ Play", FontWeight = FontWeights.Bold, MinWidth = 80, Cursor = Cursors.Hand };
-    private readonly Button recGuitarBtn = new() { Content = "🔴 REC Guitarra", FontWeight = FontWeights.Bold, MinWidth = 125, Cursor = Cursors.Hand };
+    private readonly Button recGuitarBtn = new() { Content = L("🔴 REC Guitarra", "🔴 REC Guitar"), FontWeight = FontWeights.Bold, MinWidth = 125, Cursor = Cursors.Hand };
     private readonly ToggleButton loopToggle = new() { Content = "🔁 Loop: OFF", Cursor = Cursors.Hand, MinWidth = 85 };
     private readonly TextBlock digitalClock = new() { Text = "00:00.0 / 00:00.0", FontFamily = new FontFamily("Consolas, Courier New"), FontSize = 14, FontWeight = FontWeights.Bold, Foreground = DarkUiTheme.AuraCyanPrimaryBrush, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
 
@@ -504,7 +505,7 @@ public sealed class JamStudioWindow : Window
     };
     private readonly TextBlock dropPromptText = new()
     {
-        Text = "📥 Arrastra aquí cualquier archivo .mp3, .wav o .flac desde tu equipo para comenzar la práctica",
+        Text = L("📥 Arrastra aquí cualquier archivo .mp3, .wav o .flac desde tu equipo para comenzar la práctica", "📥 Drag and drop any .mp3, .wav, or .flac file here to start practicing"),
         FontSize = 12,
         Foreground = DarkUiTheme.AuraTextMutedBrush,
         HorizontalAlignment = HorizontalAlignment.Center,
@@ -711,7 +712,7 @@ public sealed class JamStudioWindow : Window
         {
             Index = 7,
             RoleKey = "gp200",
-            Name = "Track 8 · ⚡ MI GUITARRA GP-200",
+            Name = L("Track 8 · ⚡ MI GUITARRA GP-200", "Track 8 · ⚡ MY GP-200 GUITAR"),
             Icon = "⚡",
             ThemeColor = Color.FromRgb(0, 229, 255),
             IsArmed = true,
@@ -963,11 +964,11 @@ public sealed class JamStudioWindow : Window
         // Top actions (matches Ruler + Automation + Editing Toolbar height)
         var topActionsGrid = new Grid { Height = RulerHeight + AutoTrackHeight + EditingToolbarHeight, Background = DarkUiTheme.AuraBgSurfaceBrush };
         var topActionsRow = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
-        var addTrackBtn = new Button { Content = "+ Pista", Padding = new Thickness(8, 3, 8, 3), FontSize = 11, Cursor = Cursors.Hand, ToolTip = "Añadir una nueva pista de audio vacía" };
+        var addTrackBtn = new Button { Content = L("+ Pista", "+ Track"), Padding = new Thickness(8, 3, 8, 3), FontSize = 11, Cursor = Cursors.Hand, ToolTip = L("Añadir una nueva pista de audio vacía", "Add a new empty audio track") };
         addTrackBtn.Click += (_, _) => AddNewEmptyTrack();
         var importFolderBtn = new Button { Content = "📂 Stems", Padding = new Thickness(8, 3, 8, 3), FontSize = 11, Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0), ToolTip = "Importar carpeta con stems de audio" };
         importFolderBtn.Click += (_, _) => ImportStemsFromFolderDialog();
-        var addTriggerBtn = new Button { Content = "⚡ + Disparador", Padding = new Thickness(8, 3, 8, 3), FontSize = 11, Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0), ToolTip = "Añadir cambio de Escena o Preset GP-200" };
+        var addTriggerBtn = new Button { Content = L("⚡ + Disparador", "⚡ + Trigger"), Padding = new Thickness(8, 3, 8, 3), FontSize = 11, Cursor = Cursors.Hand, Margin = new Thickness(4, 0, 0, 0), ToolTip = L("Añadir cambio de Escena o Preset GP-200", "Add GP-200 Scene or Preset change") };
         addTriggerBtn.Click += (_, _) => OpenAddTriggerDialog(currentPositionSeconds);
         topActionsRow.Children.Add(addTrackBtn);
         topActionsRow.Children.Add(importFolderBtn);
@@ -1057,15 +1058,15 @@ public sealed class JamStudioWindow : Window
 
             // Rich Context Menu for every track
             var ctx = new ContextMenu();
-            var miLoad = new MenuItem { Header = "📁 Cargar archivo de audio a esta pista..." };
+            var miLoad = new MenuItem { Header = L("📁 Cargar archivo de audio a esta pista...", "📁 Load audio file into this track...") };
             miLoad.Click += (_, _) => OpenFileForTrack(capturedIndex);
             ctx.Items.Add(miLoad);
 
-            var miRename = new MenuItem { Header = "✏️ Renombrar pista..." };
+            var miRename = new MenuItem { Header = L("✏️ Renombrar pista...", "✏️ Rename track...") };
             miRename.Click += (_, _) => OpenRenameTrackDialog(track);
             ctx.Items.Add(miRename);
 
-            var miColor = new MenuItem { Header = "🎨 Cambiar color de pista..." };
+            var miColor = new MenuItem { Header = L("🎨 Cambiar color de pista...", "🎨 Change track color...") };
             miColor.Click += (_, _) => OpenColorPicker(track);
             ctx.Items.Add(miColor);
 
@@ -1075,7 +1076,7 @@ public sealed class JamStudioWindow : Window
             miSplit.Click += (_, _) => { selectedTrackIndex = capturedIndex; SplitActiveTrackAtPlayhead(); };
             ctx.Items.Add(miSplit);
 
-            var miTrim = new MenuItem { Header = "⏱️ Recortar audio a la zona de Loop" };
+            var miTrim = new MenuItem { Header = L("⏱️ Recortar audio a la zona de Loop", "⏱️ Trim audio to Loop region") };
             miTrim.Click += (_, _) => { selectedTrackIndex = capturedIndex; TrimActiveTrackToLoop(); };
             ctx.Items.Add(miTrim);
 
@@ -1089,17 +1090,17 @@ public sealed class JamStudioWindow : Window
 
             ctx.Items.Add(new Separator());
 
-            var miDup = new MenuItem { Header = "📋 Duplicar pista" };
+            var miDup = new MenuItem { Header = L("📋 Duplicar pista", "📋 Duplicate track") };
             miDup.Click += (_, _) => DuplicateTrack(capturedIndex);
             ctx.Items.Add(miDup);
 
-            var miClear = new MenuItem { Header = "🗑️ Vaciar audio de esta pista" };
+            var miClear = new MenuItem { Header = L("🗑️ Vaciar audio de esta pista", "🗑️ Clear audio from this track") };
             miClear.Click += (_, _) => { selectedTrackIndex = capturedIndex; ClearActiveTrack(); };
             ctx.Items.Add(miClear);
 
             if (tracks.Count > 1)
             {
-                var miDelete = new MenuItem { Header = "❌ Eliminar esta pista", Foreground = DarkUiTheme.DangerBrush };
+                var miDelete = new MenuItem { Header = L("❌ Eliminar esta pista", "❌ Delete this track"), Foreground = DarkUiTheme.DangerBrush };
                 miDelete.Click += (_, _) => { selectedTrackIndex = capturedIndex; DeleteActiveTrack(); };
                 ctx.Items.Add(miDelete);
             }
@@ -1125,7 +1126,7 @@ public sealed class JamStudioWindow : Window
                 Foreground = track.IsArmed ? Brushes.White : DarkUiTheme.AuraTextMutedBrush,
                 Margin = new Thickness(0, 0, 4, 0),
                 Cursor = Cursors.Hand,
-                ToolTip = track.IsArmed ? "Pista Armada para Grabación (Haz clic para desarmar)" : "Armar esta pista para grabar tu guitarra GP-200"
+                ToolTip = track.IsArmed ? L("Pista Armada para Grabación (Haz clic para desarmar)", "Track Armed for Recording (Click to disarm)") : L("Armar esta pista para grabar tu guitarra GP-200", "Arm this track to record your GP-200 guitar")
             };
             rBtn.Click += (_, e) =>
             {
@@ -1174,7 +1175,7 @@ public sealed class JamStudioWindow : Window
                 Foreground = track.IsMuted ? Brushes.White : DarkUiTheme.AuraTextMainBrush,
                 Padding = new Thickness(0),
                 Cursor = Cursors.Hand,
-                ToolTip = "Mute (Silenciar pista)"
+                ToolTip = L("Mute (Silenciar pista)", "Mute track")
             };
             var sBtn = new Button
             {
@@ -1226,7 +1227,7 @@ public sealed class JamStudioWindow : Window
                 Background = track.IsMuted ? DarkUiTheme.DangerBrush : DarkUiTheme.SuccessBrush,
                 Margin = new Thickness(0, 0, 6, 0),
                 Cursor = Cursors.Hand,
-                ToolTip = track.IsMuted ? "Pista Silenciada (Clic para activar)" : "Pista Activa (Clic para silenciar)"
+                ToolTip = track.IsMuted ? L("Pista Silenciada (Clic para activar)", "Track Muted (Click to unmute)") : L("Pista Activa (Clic para silenciar)", "Track Active (Click to mute)")
             };
             muteDot.MouseLeftButtonDown += (_, e) =>
             {
@@ -1254,7 +1255,7 @@ public sealed class JamStudioWindow : Window
                 VerticalAlignment = VerticalAlignment.Center,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 MaxWidth = 100,
-                ToolTip = "Doble clic para renombrar pista"
+                ToolTip = L("Doble clic para renombrar pista", "Double-click to rename track")
             };
             nameTxt.MouseLeftButtonDown += (s, e) =>
             {
@@ -1274,7 +1275,7 @@ public sealed class JamStudioWindow : Window
                 Padding = new Thickness(0),
                 Margin = new Thickness(2, 0, 0, 0),
                 Cursor = Cursors.Hand,
-                ToolTip = "Renombrar pista"
+                ToolTip = L("Renombrar pista", "Rename track")
             };
             renameBtn.Click += (s, e) =>
             {
@@ -1291,7 +1292,7 @@ public sealed class JamStudioWindow : Window
                 Padding = new Thickness(0),
                 Margin = new Thickness(2, 0, 0, 0),
                 Cursor = Cursors.Hand,
-                ToolTip = "Cargar audio en esta pista (o arrastra y suelta aquí)"
+                ToolTip = L("Cargar audio en esta pista (o arrastra y suelta aquí)", "Load audio into this track (or drag and drop here)")
             };
             loadTrackBtn.Click += (s, e) =>
             {
@@ -1317,7 +1318,7 @@ public sealed class JamStudioWindow : Window
                     Background = track.IsMuted ? DarkUiTheme.SuccessBrush : DarkUiTheme.AuraBgDeepBrush,
                     Foreground = Brushes.White,
                     Cursor = Cursors.Hand,
-                    ToolTip = "Silencia la guitarra original para tocar encima con tu GP-200"
+                    ToolTip = L("Silencia la guitarra original para tocar encima con tu GP-200", "Mutes the original guitar so you can play over it with your GP-200")
                 };
                 mutePracticeBtn.Click += (_, e) =>
                 {
@@ -1377,7 +1378,7 @@ public sealed class JamStudioWindow : Window
                     Maximum = 6,
                     Value = track.VolumeDb,
                     Margin = new Thickness(0, 2, 6, 2),
-                    ToolTip = "Volumen (-30dB a +6dB)"
+                    ToolTip = L("Volumen (-30dB a +6dB)", "Volume (-30dB to +6dB)")
                 };
                 volSlider.ValueChanged += (_, e) =>
                 {
@@ -1390,7 +1391,7 @@ public sealed class JamStudioWindow : Window
 
             var panStack = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
             var panLabel = new TextBlock { Text = "PAN", FontSize = 9, Foreground = DarkUiTheme.AuraTextMutedBrush, Margin = new Thickness(0, 0, 4, 0) };
-            var panSlider = new Slider { Minimum = -1, Maximum = 1, Value = track.Pan, Width = 36, ToolTip = "Paneo Estéreo (L / R)" };
+            var panSlider = new Slider { Minimum = -1, Maximum = 1, Value = track.Pan, Width = 36, ToolTip = L("Paneo Estéreo (L / R)", "Stereo Pan (L / R)") };
             panSlider.ValueChanged += (_, e) =>
             {
                 track.Pan = (float)e.NewValue;
@@ -1486,13 +1487,13 @@ public sealed class JamStudioWindow : Window
 
         var addTrackBtn = new Button
         {
-            Content = "+ Pista",
+            Content = L("+ Pista", "+ Track"),
             Padding = new Thickness(6, 2, 6, 2),
             FontSize = 11,
             FontWeight = FontWeights.SemiBold,
             Cursor = Cursors.Hand,
             Margin = new Thickness(2, 0, 0, 0),
-            ToolTip = "Añadir una nueva pista vacía"
+            ToolTip = L("Añadir una nueva pista vacía", "Add a new empty track")
         };
         addTrackBtn.Click += (_, _) => AddNewEmptyTrack();
         rightStack.Children.Add(addTrackBtn);
@@ -1504,7 +1505,7 @@ public sealed class JamStudioWindow : Window
             FontSize = 11,
             Cursor = Cursors.Hand,
             Margin = new Thickness(2, 0, 0, 0),
-            ToolTip = "Dividir el clip de audio en la posición del cabezal (Atajo: tecla S)"
+            ToolTip = L("Dividir el clip de audio en la posición del cabezal (Atajo: tecla S)", "Split audio clip at playhead position (Shortcut: S)")
         };
         splitBtn.Click += (_, _) => SplitActiveTrackAtPlayhead();
         rightStack.Children.Add(splitBtn);
@@ -1516,7 +1517,7 @@ public sealed class JamStudioWindow : Window
             FontSize = 11,
             Cursor = Cursors.Hand,
             Margin = new Thickness(2, 0, 0, 0),
-            ToolTip = "Recortar el audio de la pista al rango de Loop"
+            ToolTip = L("Recortar el audio de la pista al rango de Loop", "Trim track audio to Loop range")
         };
         trimBtn.Click += (_, _) => TrimActiveTrackToLoop();
         rightStack.Children.Add(trimBtn);
@@ -1528,7 +1529,7 @@ public sealed class JamStudioWindow : Window
             FontSize = 11,
             Cursor = Cursors.Hand,
             Margin = new Thickness(2, 0, 0, 0),
-            ToolTip = "Vacía el archivo de audio de la pista actual (Atajo: tecla Delete)"
+            ToolTip = L("Vacía el archivo de audio de la pista actual (Atajo: tecla Delete)", "Clear audio file from current track (Shortcut: Delete)")
         };
         clearBtn.Click += (_, _) => ClearActiveTrack();
         rightStack.Children.Add(clearBtn);
@@ -1549,7 +1550,7 @@ public sealed class JamStudioWindow : Window
             Foreground = DarkUiTheme.AuraCyanPrimaryBrush,
             Cursor = Cursors.Hand,
             Margin = new Thickness(2, 0, 0, 0),
-            ToolTip = "Abrir la aplicación StemKit oficial con sincronización automática"
+            ToolTip = L("Abrir la aplicación StemKit oficial con sincronización automática", "Open official StemKit app with automatic sync")
         };
         stemKitGuiBtn.Click += (_, _) => OpenStemKitGuiWithAutoSync();
         rightStack.Children.Add(stemKitGuiBtn);
@@ -1583,14 +1584,14 @@ public sealed class JamStudioWindow : Window
 
         toolButtons.Clear();
         (PlaylistTool tool, string label, string tip)[] tools = [
-            (PlaylistTool.Draw, "✏️ Lápiz", "Lápiz: Seleccionar clips y ubicar cabezal"),
-            (PlaylistTool.Paint, "🖌️ Pincel", "Pincel: Edición ágil de clips"),
+            (PlaylistTool.Draw, L("✏️ Lápiz", "✏️ Pencil"), L("Lápiz: Seleccionar clips y ubicar cabezal", "Pencil: Select clips and position playhead")),
+            (PlaylistTool.Paint, "🖌️ Pincel", L("Pincel: Edición ágil de clips", "Brush: Quick clip editing")),
             (PlaylistTool.Slice, "✂️ Corte", "Cuchilla: Haz clic sobre cualquier onda para cortarla"),
             (PlaylistTool.Delete, "❌ Borrar", "Borrador: Haz clic sobre un clip para eliminar su audio"),
-            (PlaylistTool.Mute, "🔇 Mute", "Silenciador: Haz clic en una pista para silenciar / activar"),
+            (PlaylistTool.Mute, "🔇 Mute", L("Silenciador: Haz clic en una pista para silenciar / activar", "Mute tool: Click a track to mute / unmute")),
             (PlaylistTool.Slip, "⬌ Deslizar", "Deslizar: Desplaza el inicio del audio dentro del clip"),
-            (PlaylistTool.Zoom, "🔍 Zoom", "Zoom: Clic izquierdo amplía ondas, clic derecho reduce"),
-            (PlaylistTool.Select, "⬚ Select", "Selección de región")
+            (PlaylistTool.Zoom, "🔍 Zoom", L("Zoom: Clic izquierdo amplía ondas, clic derecho reduce", "Zoom: Left-click zooms in, right-click zooms out")),
+            (PlaylistTool.Select, "⬚ Select", L("Selección de región", "Region selection"))
         ];
 
         foreach (var (t, label, tip) in tools)
@@ -1741,7 +1742,7 @@ public sealed class JamStudioWindow : Window
         var track = tracks[trackIndex];
         if (!track.HasAudio)
         {
-            dropPromptText.Text = "⚠️ Esta pista no contiene audio para cortar.";
+            dropPromptText.Text = L("⚠️ Esta pista no contiene audio para cortar.", "⚠️ This track contains no audio to split.");
             dropPromptText.Foreground = DarkUiTheme.WarningBrush;
             return;
         }
@@ -1752,7 +1753,7 @@ public sealed class JamStudioWindow : Window
         var targetClip = track.Clips.FirstOrDefault(c => splitTime > c.StartOffsetSeconds && splitTime < c.EndSeconds);
         if (targetClip == null)
         {
-            dropPromptText.Text = "⚠️ Haz clic dentro de una onda de audio para cortarla con la cuchilla en esa posición.";
+            dropPromptText.Text = L("⚠️ Haz clic dentro de una onda de audio para cortarla con la cuchilla en esa posición.", "⚠️ Click inside an audio waveform to split it with the blade at that position.");
             dropPromptText.Foreground = DarkUiTheme.WarningBrush;
             return;
         }
@@ -1884,7 +1885,7 @@ public sealed class JamStudioWindow : Window
                         }
                         break;
                     case PlaylistTool.Mute:
-                        PushUndo(tracks[capturedIndex].IsMuted ? "Activar pista" : "Silenciar pista");
+                        PushUndo(tracks[capturedIndex].IsMuted ? L("Activar pista", "Unmute track") : L("Silenciar pista", "Mute track"));
                         tracks[capturedIndex].IsMuted = !tracks[capturedIndex].IsMuted;
                         audioEngine.SetMute(capturedIndex, tracks[capturedIndex].IsMuted);
                         RenderTrackHeaders();
@@ -2168,7 +2169,7 @@ public sealed class JamStudioWindow : Window
 
         var laneTag = new TextBlock
         {
-            Text = "⚡ Pista de Automatización GP-200 (Doble clic para añadir cambio de Escena/Preset)",
+            Text = L("⚡ Pista de Automatización GP-200 (Doble clic para añadir cambio de Escena/Preset)", "⚡ GP-200 Automation Track (Double-click to add Scene/Preset change)"),
             FontSize = 10,
             FontWeight = FontWeights.Bold,
             Foreground = DarkUiTheme.AuraCyanPrimaryBrush,
@@ -2302,7 +2303,7 @@ public sealed class JamStudioWindow : Window
                 {
                     audioEngine.SetSolo(i, tracks[i].IsSolo);
                 }
-                dropPromptText.Text = "● Modo SONG: Reproduciendo todas las pistas de la canción";
+                dropPromptText.Text = L("● Modo SONG: Reproduciendo todas las pistas de la canción", "● SONG Mode: Playing all tracks in the song");
                 dropPromptText.Foreground = DarkUiTheme.AuraCyanPrimaryBrush;
             }
         };
@@ -2330,7 +2331,7 @@ public sealed class JamStudioWindow : Window
         if (dialog.ShowDialog() == true)
         {
             await audioEngine.ExportMixdownAsync(dialog.FileName);
-            UiDialogs.Show(this, "✓ Mezcla multipista exportada con éxito en formato WAV de estudio.", "Exportar Mezcla");
+            UiDialogs.Show(this, L("✓ Mezcla multipista exportada con éxito en formato WAV de estudio.", "✓ Multitrack mix exported successfully in studio WAV format."), "Exportar Mezcla");
         }
     }
 
@@ -2344,7 +2345,7 @@ public sealed class JamStudioWindow : Window
             var dialog = new OpenFileDialog
             {
                 Filter = "Archivos de Audio|*.mp3;*.wav;*.flac;*.m4a;*.ogg|Todos los archivos|*.*",
-                Title = "Cargar Audio para GP-200 Jam Studio"
+                Title = L("Cargar Audio para GP-200 Jam Studio", "Load Audio for GP-200 Jam Studio")
             };
             if (dialog.ShowDialog() == true)
             {
@@ -2353,7 +2354,7 @@ public sealed class JamStudioWindow : Window
         };
         menu.Items.Add(localFileItem);
 
-        var urlItem = new MenuItem { Header = "🌐 Pegar enlace de YouTube o URL de audio...", ToolTip = "Descarga y procesa automáticamente canciones desde YouTube" };
+        var urlItem = new MenuItem { Header = "🌐 Pegar enlace de YouTube o URL de audio...", ToolTip = L("Descarga y procesa automáticamente canciones desde YouTube", "Automatically downloads and processes songs from YouTube") };
         urlItem.Click += (_, _) => OpenYouTubeUrlDialog();
         menu.Items.Add(urlItem);
 
@@ -2371,7 +2372,7 @@ public sealed class JamStudioWindow : Window
         var folderItem = new MenuItem
         {
             Header = "📂 Importar carpeta con stems (.wav, .flac, .mp3)...",
-            ToolTip = "Carga todos los archivos de audio de una carpeta en pistas independientes"
+            ToolTip = L("Carga todos los archivos de audio de una carpeta en pistas independientes", "Loads all audio files from a folder into separate tracks")
         };
         folderItem.Click += (_, _) => ImportStemsFromFolderDialog();
         menu.Items.Add(folderItem);
@@ -2384,7 +2385,7 @@ public sealed class JamStudioWindow : Window
     {
         var dialog = new Window
         {
-            Title = "Importar Canción desde YouTube",
+            Title = L("Importar Canción desde YouTube", "Import Song from YouTube"),
             Width = 440,
             Height = 180,
             Background = DarkUiTheme.AuraBgDeepBrush,
@@ -2393,13 +2394,13 @@ public sealed class JamStudioWindow : Window
             Owner = this
         };
         var stack = new StackPanel { Margin = new Thickness(16) };
-        stack.Children.Add(new TextBlock { Text = "Pega aquí el enlace del video de YouTube:", FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 8) });
+        stack.Children.Add(new TextBlock { Text = L("Pega aquí el enlace del video de YouTube:", "Paste the YouTube video link here:"), FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 8) });
 
         var urlBox = new TextBox { Text = "https://www.youtube.com/watch?v=", Margin = new Thickness(0, 0, 0, 14) };
         stack.Children.Add(urlBox);
 
         var btnRow = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-        var okBtn = new Button { Content = "Descargar y Separar", Padding = new Thickness(12, 6, 12, 6), Cursor = Cursors.Hand };
+        var okBtn = new Button { Content = L("Descargar y Separar", "Download & Separate"), Padding = new Thickness(12, 6, 12, 6), Cursor = Cursors.Hand };
         okBtn.Click += async (_, _) =>
         {
             string url = urlBox.Text.Trim();
@@ -2440,7 +2441,7 @@ public sealed class JamStudioWindow : Window
             else
             {
                 SetOperationStatus(false);
-                UiDialogs.Show(this, "No se pudo descargar el audio del video de YouTube. Verifica el enlace o carga un archivo local (.mp3/.wav).", "YouTube");
+                UiDialogs.Show(this, L("No se pudo descargar el audio del video de YouTube. Verifica el enlace o carga un archivo local (.mp3/.wav).", "Could not download audio from the YouTube video. Check the link or load a local file (.mp3/.wav)."), "YouTube");
             }
         }
         catch (OperationCanceledException)
@@ -2487,7 +2488,7 @@ public sealed class JamStudioWindow : Window
         var importFolderItem = new MenuItem
         {
             Header = "📂 Importar carpeta con stems de proyecto (.wav, .flac, .mp3)...",
-            ToolTip = "Selecciona una carpeta donde tengas stems para cargarlos de inmediato"
+            ToolTip = L("Selecciona una carpeta donde tengas stems para cargarlos de inmediato", "Select a folder containing stems to load them immediately")
         };
         importFolderItem.Click += (_, _) => ImportStemsFromFolderDialog();
         menu.Items.Add(importFolderItem);
@@ -2519,7 +2520,7 @@ public sealed class JamStudioWindow : Window
             }
             else
             {
-                UiDialogs.Show(this, "No se encontró una instalación existente de StemKit en las rutas estándar. Puedes descargarlo en 1 clic.", "StemKit");
+                UiDialogs.Show(this, L("No se encontró una instalación existente de StemKit en las rutas estándar. Puedes descargarlo en 1 clic.", "No existing StemKit installation found in standard paths. You can download it in 1 click."), "StemKit");
             }
         };
         menu.Items.Add(autoDetectItem);
@@ -2535,7 +2536,7 @@ public sealed class JamStudioWindow : Window
             var dialog = new OpenFileDialog
             {
                 Filter = "Ejecutable StemKit (*.exe)|*.exe|Todos los archivos|*.*",
-                Title = "Seleccionar ejecutable de StemKit o Demucs"
+                Title = L("Seleccionar ejecutable de StemKit o Demucs", "Select StemKit or Demucs executable")
             };
             if (dialog.ShowDialog() == true)
             {
@@ -2549,10 +2550,10 @@ public sealed class JamStudioWindow : Window
         menu.Items.Add(new Separator());
 
         // Model selection
-        var modelHeader = new MenuItem { Header = "MODELO DE SEPARACIÓN (DEMUCS / MDX):", IsEnabled = false, FontWeight = FontWeights.Bold };
+        var modelHeader = new MenuItem { Header = L("MODELO DE SEPARACIÓN (DEMUCS / MDX):", "SEPARATION MODEL (DEMUCS / MDX):"), IsEnabled = false, FontWeight = FontWeights.Bold };
         menu.Items.Add(modelHeader);
 
-        var m6s = new MenuItem { Header = "htdemucs_6s (6 Stems: Voz, Batería, Bajo, Guitarra, Piano, Otros)", IsChecked = chosenModel == StemKitModel.Htdemucs6s };
+        var m6s = new MenuItem { Header = L("htdemucs_6s (6 Stems: Voz, Batería, Bajo, Guitarra, Piano, Otros)", "htdemucs_6s (6 Stems: Vocals, Drums, Bass, Guitar, Piano, Other)"), IsChecked = chosenModel == StemKitModel.Htdemucs6s };
         m6s.Click += (_, _) => chosenModel = StemKitModel.Htdemucs6s;
         menu.Items.Add(m6s);
 
@@ -2560,7 +2561,7 @@ public sealed class JamStudioWindow : Window
         m4ft.Click += (_, _) => chosenModel = StemKitModel.Htdemucs4sFinetuned;
         menu.Items.Add(m4ft);
 
-        var m4fast = new MenuItem { Header = "htdemucs (Rápido)", IsChecked = chosenModel == StemKitModel.Htdemucs4sFast };
+        var m4fast = new MenuItem { Header = L("htdemucs (Rápido)", "htdemucs (Fast)"), IsChecked = chosenModel == StemKitModel.Htdemucs4sFast };
         m4fast.Click += (_, _) => chosenModel = StemKitModel.Htdemucs4sFast;
         menu.Items.Add(m4fast);
 
@@ -2589,7 +2590,7 @@ public sealed class JamStudioWindow : Window
         }
         else
         {
-            UiDialogs.Show(this, "No se pudo completar la descarga. Verifica tu conexión a internet o utiliza el motor DSP offline.", "Descarga");
+            UiDialogs.Show(this, L("No se pudo completar la descarga. Verifica tu conexión a internet o utiliza el motor DSP offline.", "Could not complete download. Check your internet connection or use the offline DSP engine."), "Descarga");
         }
     }
 
@@ -2611,7 +2612,7 @@ public sealed class JamStudioWindow : Window
     {
         if (string.IsNullOrEmpty(loadedSongPath) || !File.Exists(loadedSongPath))
         {
-            UiDialogs.Show(this, "Por favor carga un archivo de audio primero usando [+ Cargar Audio / YouTube].", "StemKit");
+            UiDialogs.Show(this, L("Por favor carga un archivo de audio primero usando [+ Cargar Audio / YouTube].", "Please load an audio file first using [+ Load Audio / YouTube]."), "StemKit");
             return;
         }
 
@@ -2623,7 +2624,7 @@ public sealed class JamStudioWindow : Window
                 "El backend de StemKit no está configurado aún en tu equipo.\n\n" +
                 "¿Deseas descargarlo automáticamente desde GitHub (danielravina/stemkit v0.2.0) sin tocar terminales ni dependencias complejas?\n\n" +
                 "Pulsa 'Sí' para descarga automática, o 'No' para usar la separación DSP interna inmediata.",
-                "Instalación de StemKit",
+                L("Instalación de StemKit", "StemKit Installation"),
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Information);
 
@@ -2743,7 +2744,7 @@ public sealed class JamStudioWindow : Window
         {
             Header = "🎸 Modo Práctica Guitarra (Silenciar guitarra original)",
             FontWeight = FontWeights.Bold,
-            ToolTip = "Silencia la pista de guitarra original de la canción para que toques la tuya encima con tu GP-200"
+            ToolTip = L("Silencia la pista de guitarra original de la canción para que toques la tuya encima con tu GP-200", "Mutes the original guitar track so you can play yours over it with your GP-200")
         };
         miPractice.Click += (_, _) => ApplyGuitarPracticeMode();
         menu.Items.Add(miPractice);
@@ -2751,7 +2752,7 @@ public sealed class JamStudioWindow : Window
         var miKaraoke = new MenuItem
         {
             Header = "🎤 Modo Karaoke (Silenciar voces)",
-            ToolTip = "Silencia la pista de voces de la canción"
+            ToolTip = L("Silencia la pista de voces de la canción", "Mutes the vocal track of the song")
         };
         miKaraoke.Click += (_, _) => ApplyKaraokeMode();
         menu.Items.Add(miKaraoke);
@@ -2759,7 +2760,7 @@ public sealed class JamStudioWindow : Window
         var miRhythm = new MenuItem
         {
             Header = "🥁 Modo Ritmo (Solo Batería + Bajo)",
-            ToolTip = "Solo reproduce batería y bajo para practicar tempo, compás y groove"
+            ToolTip = L("Solo reproduce batería y bajo para practicar tempo, compás y groove", "Plays only drums and bass to practice tempo, timing, and groove")
         };
         miRhythm.Click += (_, _) => ApplyDrumsAndBassMode();
         menu.Items.Add(miRhythm);
@@ -2769,7 +2770,7 @@ public sealed class JamStudioWindow : Window
         var miReset = new MenuItem
         {
             Header = "🔄 Restablecer Pistas (Desmutear todas)",
-            ToolTip = "Desactiva todos los silenciados de las pistas"
+            ToolTip = L("Desactiva todos los silenciados de las pistas", "Unmutes all tracks")
         };
         miReset.Click += (_, _) => ResetMix();
         menu.Items.Add(miReset);
@@ -2786,7 +2787,7 @@ public sealed class JamStudioWindow : Window
         {
             Header = "💾 Exportar Mezcla Master (.WAV)",
             FontWeight = FontWeights.Bold,
-            ToolTip = "Exporta la mezcla master actual con todas las pistas activas como archivo .WAV"
+            ToolTip = L("Exporta la mezcla master actual con todas las pistas activas como archivo .WAV", "Exports the current master mix with all active tracks as a .WAV file")
         };
         miExportMix.Click += async (_, _) => await ExportMixdownDialogAsync();
         menu.Items.Add(miExportMix);
@@ -2794,7 +2795,7 @@ public sealed class JamStudioWindow : Window
         var miExportStems = new MenuItem
         {
             Header = "📁 Exportar Todos los Stems Individuales (.WAV)",
-            ToolTip = "Exporta cada stem separado como archivo de audio independiente a una carpeta"
+            ToolTip = L("Exporta cada stem separado como archivo de audio independiente a una carpeta", "Exports each separated stem as an individual audio file to a folder")
         };
         miExportStems.Click += (_, _) => ExportIndividualStems();
         menu.Items.Add(miExportStems);
@@ -2856,7 +2857,7 @@ public sealed class JamStudioWindow : Window
             audioEngine.SetSolo(i, false);
         }
         RenderTrackHeaders();
-        UiDialogs.Show(this, "✓ Modo Práctica de Guitarra activado:\n\n• Guitarra original silenciada.\n• Acompañamiento activo.\n• Entrada de tu GP-200 armada para tocar encima.", "Práctica de Guitarra");
+        UiDialogs.Show(this, "✓ Modo Práctica de Guitarra activado:\n\n• Guitarra original silenciada.\n• Acompañamiento activo.\n• Entrada de tu GP-200 armada para tocar encima.", L("Práctica de Guitarra", "Guitar Practice"));
     }
 
     private void ApplyKaraokeMode()
@@ -2890,7 +2891,7 @@ public sealed class JamStudioWindow : Window
             audioEngine.SetSolo(i, isRhythm);
         }
         RenderTrackHeaders();
-        UiDialogs.Show(this, "✓ Modo Ritmo (Batería + Bajo) activado:\n\n• Batería y bajo aislados.\n• Guitarras, voces y teclados silenciados.\n• Listo para entrenar tiempo, groove y compás con tu GP-200.", "Ritmo Batería + Bajo");
+        UiDialogs.Show(this, "✓ Modo Ritmo (Batería + Bajo) activado:\n\n• Batería y bajo aislados.\n• Guitarras, voces y teclados silenciados.\n• Listo para entrenar tiempo, groove y compás con tu GP-200.", L("Ritmo Batería + Bajo", "Drums + Bass Rhythm"));
     }
 
     private void ResetMix()
@@ -2914,13 +2915,13 @@ public sealed class JamStudioWindow : Window
         var stemsWithFiles = tracks.Where(t => !string.IsNullOrEmpty(t.FilePath) && File.Exists(t.FilePath)).ToList();
         if (stemsWithFiles.Count == 0)
         {
-            UiDialogs.Show(this, "No hay pistas de stems separadas cargadas para exportar. Separa una canción primero.", "Exportar Stems");
+            UiDialogs.Show(this, L("No hay pistas de stems separadas cargadas para exportar. Separa una canción primero.", "No separated stem tracks loaded to export. Separate a song first."), "Exportar Stems");
             return;
         }
 
         var dialog = new Microsoft.Win32.OpenFolderDialog
         {
-            Title = "Seleccionar carpeta de destino para los Stems (.wav)"
+            Title = L("Seleccionar carpeta de destino para los Stems (.wav)", "Select destination folder for Stems (.wav)")
         };
         if (dialog.ShowDialog(this) == true)
         {
@@ -3003,7 +3004,7 @@ public sealed class JamStudioWindow : Window
             var res = MessageBox.Show(
                 this,
                 "StemKit GUI no está instalado aún en tu equipo.\n\n" +
-                "¿Deseas descargarlo automáticamente desde GitHub (danielravina/stemkit v0.2.0) en 1 clic?",
+                L("¿Deseas descargarlo automáticamente desde GitHub (danielravina/stemkit v0.2.0) en 1 clic?", "Would you like to download it automatically from GitHub (danielravina/stemkit v0.2.0) in 1 click?"),
                 "StemKit GUI Auto-Sync",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
@@ -3058,7 +3059,7 @@ public sealed class JamStudioWindow : Window
     {
         var dialog = new Microsoft.Win32.OpenFolderDialog
         {
-            Title = "Seleccionar carpeta que contiene stems de audio (.wav, .flac, .mp3)"
+            Title = L("Seleccionar carpeta que contiene stems de audio (.wav, .flac, .mp3)", "Select folder containing audio stems (.wav, .flac, .mp3)")
         };
         if (dialog.ShowDialog(this) == true)
         {
@@ -3085,7 +3086,7 @@ public sealed class JamStudioWindow : Window
         try
         {
             if (trackIndex < 0) return;
-            PushUndo("Cargar archivo de audio");
+            PushUndo(L("Cargar archivo de audio", "Load audio file"));
             while (tracks.Count <= trackIndex)
             {
                 AddNewEmptyTrack();
@@ -3161,7 +3162,7 @@ public sealed class JamStudioWindow : Window
             Owner = this
         };
         var stack = new StackPanel { Margin = new Thickness(16) };
-        stack.Children.Add(new TextBlock { Text = "Nombre de la pista:", FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 6) });
+        stack.Children.Add(new TextBlock { Text = L("Nombre de la pista:", "Track name:"), FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 6) });
         var nameBox = new TextBox { Text = track.Name, Margin = new Thickness(0, 0, 0, 12) };
         stack.Children.Add(nameBox);
 
@@ -3299,13 +3300,13 @@ public sealed class JamStudioWindow : Window
         undoBtn.Opacity = undoStack.Count > 0 ? 1.0 : 0.45;
         undoBtn.ToolTip = undoStack.Count > 0
             ? $"Deshacer: {undoStack.Peek().Description} (Ctrl+Z)"
-            : "Deshacer (Ctrl+Z)";
+            : L("Deshacer (Ctrl+Z)", "Undo (Ctrl+Z)");
 
         redoBtn.IsEnabled = redoStack.Count > 0;
         redoBtn.Opacity = redoStack.Count > 0 ? 1.0 : 0.45;
         redoBtn.ToolTip = redoStack.Count > 0
             ? $"Rehacer: {redoStack.Peek().Description} (Ctrl+Y / Ctrl+Shift+Z)"
-            : "Rehacer (Ctrl+Y / Ctrl+Shift+Z)";
+            : L("Rehacer (Ctrl+Y / Ctrl+Shift+Z)", "Redo (Ctrl+Y / Ctrl+Shift+Z)");
     }
 
     private JamStudioSnapshot CaptureSnapshot(string description)
@@ -3479,11 +3480,11 @@ public sealed class JamStudioWindow : Window
         double lEnd = loopEndSeconds > loopStartSeconds ? loopEndSeconds : totalDurationSeconds;
         if (lEnd <= lStart + 0.5)
         {
-            UiDialogs.Show(this, "Activa o define primero un rango de Loop válido para recortar el clip.", "Recortar Audio");
+            UiDialogs.Show(this, L("Activa o define primero un rango de Loop válido para recortar el clip.", "Enable or define a valid Loop range first to trim the clip."), L("Recortar Audio", "Trim Audio"));
             return;
         }
 
-        PushUndo("Recortar a Loop");
+        PushUndo(L("Recortar a Loop", "Trim to Loop"));
         double skip = Math.Max(0, lStart - activeTrack.StartOffsetSeconds);
         double take = lEnd - lStart;
         activeTrack.StartOffsetSeconds = lStart;
@@ -3500,7 +3501,7 @@ public sealed class JamStudioWindow : Window
         var activeTrack = tracks[selectedTrackIndex];
         if (!activeTrack.HasAudio) return;
 
-        PushUndo("Mover pista");
+        PushUndo(L("Mover pista", "Move track"));
         activeTrack.StartOffsetSeconds = Math.Max(0, activeTrack.StartOffsetSeconds + deltaSeconds);
         audioEngine.SetTrackOffset(activeTrack.Index, activeTrack.StartOffsetSeconds);
         totalDurationSeconds = Math.Max(totalDurationSeconds, audioEngine.Duration.TotalSeconds);
@@ -3513,7 +3514,7 @@ public sealed class JamStudioWindow : Window
         var activeTrack = tracks[selectedTrackIndex];
         if (!activeTrack.HasAudio) return;
 
-        PushUndo("Vaciar clip");
+        PushUndo(L("Vaciar clip", "Clear clip"));
         activeTrack.FilePath = null;
         activeTrack.WaveformPeaks = null;
         activeTrack.StartOffsetSeconds = 0;
@@ -3526,7 +3527,7 @@ public sealed class JamStudioWindow : Window
 
     private void AddNewEmptyTrack(string? name = null)
     {
-        PushUndo("Añadir nueva pista");
+        PushUndo(L("Añadir nueva pista", "Add new track"));
         int newIdx = tracks.Count;
         Color[] trackPalette = [
             Color.FromRgb(59, 130, 246),  // Blue
@@ -3558,7 +3559,7 @@ public sealed class JamStudioWindow : Window
     {
         if (tracks.Count <= 1)
         {
-            UiDialogs.Show(this, "Debe quedar al menos una pista en el proyecto.", "Eliminar Pista");
+            UiDialogs.Show(this, L("Debe quedar al menos una pista en el proyecto.", "At least one track must remain in the project."), L("Eliminar Pista", "Delete Track"));
             return;
         }
         if (selectedTrackIndex < 0 || selectedTrackIndex >= tracks.Count) return;
@@ -3760,7 +3761,7 @@ public sealed class JamStudioWindow : Window
         }
         else
         {
-            dropPromptText.Text = "⚠️ No se detectó sonido activo en ninguna entrada. Conecta el pedal o toca la guitarra.";
+            dropPromptText.Text = L("⚠️ No se detectó sonido activo en ninguna entrada. Conecta el pedal o toca la guitarra.", "⚠️ No active sound detected on any input. Connect your pedal or play your guitar.");
             dropPromptText.Foreground = DarkUiTheme.WarningBrush;
         }
     }
@@ -3885,7 +3886,7 @@ public sealed class JamStudioWindow : Window
             }
             catch (Exception ex)
             {
-                UiDialogs.Show(this, "Error al iniciar grabación de audio: " + ex.Message, "Error Grabación");
+                UiDialogs.Show(this, L("Error al iniciar grabación de audio: ", "Error starting audio recording: ") + ex.Message, L("Error Grabación", "Recording Error"));
                 isRecording = false;
                 return;
             }
@@ -3908,7 +3909,7 @@ public sealed class JamStudioWindow : Window
             }
             catch { }
 
-            recGuitarBtn.Content = "🔴 REC Guitarra";
+            recGuitarBtn.Content = L("🔴 REC Guitarra", "🔴 REC Guitar");
             recGuitarBtn.Background = DarkUiTheme.AuraBgCardBrush;
 
             if (!string.IsNullOrEmpty(recordingFilePath) && File.Exists(recordingFilePath) && new FileInfo(recordingFilePath).Length > 44)
@@ -4001,7 +4002,7 @@ public sealed class JamStudioWindow : Window
 
         if (songs.Count == 0)
         {
-            var noSong = new MenuItem { Header = "○ No hay canciones separadas detectadas aún en StemKit", IsEnabled = false };
+            var noSong = new MenuItem { Header = L("○ No hay canciones separadas detectadas aún en StemKit", "○ No separated songs detected in StemKit yet"), IsEnabled = false };
             menu.Items.Add(noSong);
 
             var openGui = new MenuItem { Header = "🚀 Abrir StemKit GUI para separar una canción...", FontWeight = FontWeights.Bold };
@@ -4010,7 +4011,7 @@ public sealed class JamStudioWindow : Window
         }
         else
         {
-            var header = new MenuItem { Header = "CANCIONES DETECTADAS EN STEMKIT (Haz clic para cargar en pistas):", IsEnabled = false, FontWeight = FontWeights.Bold };
+            var header = new MenuItem { Header = L("CANCIONES DETECTADAS EN STEMKIT (Haz clic para cargar en pistas):", "SONGS DETECTED IN STEMKIT (Click to load into tracks):"), IsEnabled = false, FontWeight = FontWeights.Bold };
             menu.Items.Add(header);
             menu.Items.Add(new Separator());
 
@@ -4091,7 +4092,7 @@ public sealed class JamStudioWindow : Window
     {
         var dialog = new Window
         {
-            Title = "Añadir Disparador GP-200",
+            Title = L("Añadir Disparador GP-200", "Add GP-200 Trigger"),
             Width = 360,
             Height = 240,
             Background = DarkUiTheme.AuraBgDeepBrush,
@@ -4111,10 +4112,10 @@ public sealed class JamStudioWindow : Window
         combo.SelectedIndex = 1;
         stack.Children.Add(combo);
 
-        var addBtn = new Button { Content = "Guardar Disparador", Padding = new Thickness(10, 6, 10, 6), Cursor = Cursors.Hand };
+        var addBtn = new Button { Content = L("Guardar Disparador", "Save Trigger"), Padding = new Thickness(10, 6, 10, 6), Cursor = Cursors.Hand };
         addBtn.Click += (_, _) =>
         {
-            PushUndo("Añadir disparador de escena");
+            PushUndo(L("Añadir disparador de escena", "Add scene trigger"));
             automationTriggers.Add(new TimelinePresetTrigger
             {
                 TimeSeconds = timestampSeconds,
@@ -4135,7 +4136,7 @@ public sealed class JamStudioWindow : Window
         var dialog = new OpenFileDialog
         {
             Filter = "Archivos de Audio (*.wav;*.flac;*.mp3;*.m4a;*.ogg)|*.wav;*.flac;*.mp3;*.m4a;*.ogg|Todos los archivos|*.*",
-            Title = "Añadir Pista o Stem Individual"
+            Title = L("Añadir Pista o Stem Individual", "Add Individual Track or Stem")
         };
         if (dialog.ShowDialog(this) == true)
         {
