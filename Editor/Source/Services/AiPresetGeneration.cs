@@ -166,17 +166,31 @@ internal sealed class AiPresetGeneration
         if (provider == AiProvider.LocalAi)
         {
             var localModels = new List<string>();
-            try
+            foreach (var url in new[] { "http://127.0.0", "http://127.0.0" })
             {
-                using var req = new HttpRequestMessage(HttpMethod.Get, "http://localhost:11434/v1/models");
-                using var resp = await Http.SendAsync(req, cancellationToken);
-                if (resp.IsSuccessStatusCode)
+                if (localModels.Count > 0) break;
+                try
                 {
-                    string body = await resp.Content.ReadAsStringAsync(cancellationToken);
-                    localModels.AddRange(ParseModelList(AiProvider.LocalAi, body));
+                    using var req = new HttpRequestMessage(HttpMethod.Get, url);
+                    using var resp = await Http.SendAsync(req, cancellationToken);
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        string body = await resp.Content.ReadAsStringAsync(cancellationToken);
+                        using var doc = JsonDocument.Parse(body);
+                        if (doc.RootElement.TryGetProperty("models", out var modelsArr) && modelsArr.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var m in modelsArr.EnumerateArray())
+                                if (m.TryGetProperty("name", out var n) && !string.IsNullOrWhiteSpace(n.GetString()))
+                                    localModels.Add(n.GetString()!);
+                        }
+                        else
+                        {
+                            localModels.AddRange(ParseModelList(AiProvider.LocalAi, body));
+                        }
+                    }
                 }
+                catch { }
             }
-            catch { }
 
             if (localModels.Count == 0)
             {

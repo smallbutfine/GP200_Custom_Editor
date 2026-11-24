@@ -894,12 +894,10 @@ internal sealed class AiPresetWindow : Window
                 apiKey.IsEnabled = false;
                 apiKeyEnvStatus.Text = UiText.Language == "es" ? "✓ Modo local: Conecta con Ollama (:11434) o LM Studio (:1234) sin clave ni internet" : "✓ Local Mode: Connects to Ollama (:11434) or LM Studio (:1234) without API key";
                 apiKeyEnvStatus.Foreground = BrushHex("#00E5FF");
-                model.IsEditable = true;
-                _ = VerifyProviderAndLoadModelsAsync();
+                Dispatcher.BeginInvoke(new Action(() => _ = VerifyProviderAndLoadModelsAsync()));
             }
             else
             {
-                model.IsEditable = false;
                 apiKey.IsEnabled = true;
                 string? savedKey = null;
                 try
